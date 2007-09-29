@@ -1,0 +1,7 @@
+ Copyright (C) Andrea Righi <righiandr@users.sf.net>
+
+ googlecalsync is a tool to synchronize a local iCal (.ics) file with Google Calendar.
+
+Requirements:
+  python-vobject - for local iCal file management
+  python-gdata - for remote Google Calendar management
