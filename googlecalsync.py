@@ -102,7 +102,7 @@ class GoogleCalendar:
 		else:
 			event['status'] = 'CONFIRMED'
 		if hasattr(dt, 'organizer'):
-			event['author'] = self.encode_element(dt.organizer.params['CN'][0])
+			event['organizer'] = self.encode_element(dt.organizer.params['CN'][0])
 			event['mailto'] = self.encode_element(dt.organizer.value)
 			event['mailto'] = re.search('(?<=MAILTO:).+', event['mailto']).group(0)
 		if hasattr(dt, 'rrule'):
@@ -115,7 +115,6 @@ class GoogleCalendar:
 			event['alarm'] = self.format_alarm(self.encode_element(dt.valarm.trigger.value))
 
 		# Convert into a Google Calendar event.
-		# TODO: handle event status (confirmed, rejected, etc)
 		try:
 			e.title = atom.Title(text=event['subject'])
 			e.extended_property.append(gdata.calendar.ExtendedProperty(name='local_uid', value=event['uid']))
@@ -123,6 +122,18 @@ class GoogleCalendar:
 			e.where.append(gdata.calendar.Where(value_string=event['where']))
 			e.event_status = gdata.calendar.EventStatus()
 			e.event_status.value = event['status']
+			if event.has_key('organizer'):
+				attendee = gdata.calendar.Who()
+				attendee.rel = 'ORGANIZER'
+				attendee.name = event['organizer']
+				attendee.email = event['mailto']
+				attendee.attendee_status = gdata.calendar.AttendeeStatus()
+				attendee.attendee_status.value = 'ACCEPTED'
+				if len(e.who) > 0:
+					e.who[0] = attendee
+				else:
+					e.who.append(attendee)
+			# TODO: handle list of attendees.
 			if event.has_key('rrule'):
 				# Recurring event.
 				recurrence_data = ('DTSTART;VALUE=DATE:%s\r\n'
