@@ -4,7 +4,7 @@ import sys
 from distutils.core import setup
 from googlecalsync import __version__
 
-setup(name='googlecalsync',
+setup(name='googlecalendarsync',
       version=__version__,
       description="Google Calendar Synchronizer",
       author="Andrea Righi",

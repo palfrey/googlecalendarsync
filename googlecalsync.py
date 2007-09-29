@@ -22,7 +22,7 @@
 #  - python-vobject, python-gdata
 
 """
-googlecalsync by Andrea Righi <righiandr@users.sf.net>
+googlecalendarsync by Andrea Righi <righiandr@users.sf.net>
 """
 
 __version__ = '0.1'
@@ -47,7 +47,7 @@ class GoogleCalendar:
 		self.calendar_service = gdata.calendar.service.CalendarService()
 		self.calendar_service.email = login
 		self.calendar_service.password = password
-		self.calendar_service.source = 'googlecalsync'
+		self.calendar_service.source = 'googlecalendarsync'
 		self.calendar_service.ProgrammaticLogin()
 
 	# Properly encode unicode characters.
