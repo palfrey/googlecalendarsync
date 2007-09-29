@@ -1,4 +1,4 @@
- Copyright (C) Andrea Righi <righiandr@users.sf.net>
+ Copyright (C) 2007 Andrea Righi <righiandr@users.sf.net>
 
  googlecalendarsync is a tool to bidirectional synchronize a local iCal (.ics)
  file with Google Calendar.

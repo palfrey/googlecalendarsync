@@ -13,7 +13,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
-# Copyright 2006 Andrea Righi <righiandr@users.sf.net>
+# Copyright (C) 2007 Andrea Righi <righiandr@users.sf.net>
 #
 # Description:
 #  - synchronize a local iCal (.ics) file with Google Calendar.
