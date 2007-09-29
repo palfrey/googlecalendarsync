@@ -100,7 +100,7 @@ class GoogleCalendar:
 		if hasattr(dt, 'status'):
 			event['status'] = self.encode_element(dt.status.value)
 		else:
-			event['status'] = ''
+			event['status'] = 'CONFIRMED'
 		if hasattr(dt, 'organizer'):
 			event['author'] = self.encode_element(dt.organizer.params['CN'][0])
 			event['mailto'] = self.encode_element(dt.organizer.value)
@@ -121,6 +121,8 @@ class GoogleCalendar:
 			e.extended_property.append(gdata.calendar.ExtendedProperty(name='local_uid', value=event['uid']))
 			e.content = atom.Content(text=event['description'])
 			e.where.append(gdata.calendar.Where(value_string=event['where']))
+			e.event_status = gdata.calendar.EventStatus()
+			e.event_status.value = event['status']
 			if event.has_key('rrule'):
 				# Recurring event.
 				recurrence_data = ('DTSTART;VALUE=DATE:%s\r\n'
