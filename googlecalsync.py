@@ -540,6 +540,7 @@ if __name__ == '__main__':
 				gcal_prev.sync()
 			if gcal_prev is not None:
 				ical_prev.sync()
+		print '>> Refresh Google Calendar in your browser'
 
 ### Handle remote changes => update the local calendar ###
 
@@ -619,4 +620,5 @@ if __name__ == '__main__':
 				ical_prev.sync()
 			if gcal_prev is not None:
 				gcal_prev.sync()
+		print '>> Refresh local calendar:', ical.url
 
