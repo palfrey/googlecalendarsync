@@ -19,7 +19,7 @@
 #  - synchronize a local iCal (.ics) file with Google Calendar.
 #
 # Requirements:
-#  - python-vobject, python-gdata
+#  - python-vobject, python-gdata, python-httplib2
 
 """
 googlecalendarsync by Andrea Righi <righiandr@users.sf.net>
@@ -28,7 +28,7 @@ googlecalendarsync by Andrea Righi <righiandr@users.sf.net>
 __version__ = '0.1'
 
 import sys, os, re, getopt, string, time, shutil
-import vobject, urllib, ConfigParser, md5
+import vobject, httplib2, ConfigParser, md5
 
 try:
 	from xml.etree import ElementTree
@@ -263,19 +263,23 @@ class GoogleCalendar:
 		pass
 
 class iCalCalendar:
-	def __init__(self, url):
+	def __init__(self, url, login=None, password=None):
 		self.url = url
 		m = re.match('^http', self.url)
 		try:
 			if m:
 				# Remote calendar.
-				stream = urllib.urlopen(self.url)
+				h = httplib2.Http()
+				h.add_credentials(login, password)
+				h.follow_all_redirects = True
+				resp, content = h.request(self.url, "GET")
+				assert(resp['status'] == '200')
 			else:
 				# Local calendar.
 				stream = file(self.url)
-			# Load iCal object.
-			self.cal = vobject.readOne(stream, findBegin='false')
-			stream.close()
+				content = stream.read()
+				stream.close()
+			self.cal = vobject.readOne(content, findBegin='false')
 		except:
 			# Create an empty calendar object.
 			self.cal = vobject.iCalendar()
@@ -344,7 +348,6 @@ default_configuration = """\
 [google]
 username = <GOOGLE ACCOUNT USERNAME>
 password = <GOOGLE ACCOUNT PASSWORD>
-private_url = <GOOGLE CALENDAR PRIVATE URL (iCal format)>
 
 [local]
 ical_file = <PATH OF THE LOCAL iCal FILE>
@@ -407,8 +410,7 @@ if __name__ == '__main__':
 		config.read(config_file)
 		login = config.get('google', 'username')
 		password = config.get('google', 'password')
-		# TODO: get private URL directly from Google Account informations.
-		private_url = config.get('google', 'private_url')
+		private_url = 'https://www.google.com/calendar/ical/' + login + '/private/basic.ics'
 		local_cal_file = os.path.expandvars(config.get('local', 'ical_file'))
 		workdir = os.path.expandvars(config.get('local', 'workdir'))
 	except Exception, e:
@@ -540,13 +542,13 @@ if __name__ == '__main__':
 				gcal_prev.sync()
 			if gcal_prev is not None:
 				ical_prev.sync()
-		print '>> Refresh Google Calendar in your browser'
+		print '>> Please refresh Google Calendar in your browser'
 
 ### Handle remote changes => update the local calendar ###
 
 	# Open remote calendar object in iCal format.
 	try:
-		ical_remote = iCalCalendar(private_url)
+		ical_remote = iCalCalendar(private_url, login, password)
 	except:
 		print >> sys.stderr, 'ERROR: couldn\'t open remote iCal object:', private_url
 		sys.exit(1)
@@ -620,5 +622,5 @@ if __name__ == '__main__':
 				ical_prev.sync()
 			if gcal_prev is not None:
 				gcal_prev.sync()
-		print '>> Refresh local calendar:', ical.url
+		print '>> Please refresh your local calendar:', ical.url
 

@@ -6,6 +6,7 @@
 == Requirements ==
   python-vobject - for local iCal file management
   python-gdata - for remote Google Calendar management
+  python-httplib2 - for remote iCal access
 
 == How to use googlecalendarsync ==
 
@@ -16,7 +17,6 @@ template:
 [google]
 username = <GOOGLE ACCOUNT USERNAME>
 password = <GOOGLE ACCOUNT PASSWORD>
-private_url = <GOOGLE CALENDAR PRIVATE URL (iCal format)>
 
 [local]
 ical_file = <PATH OF THE LOCAL iCal FILE>
