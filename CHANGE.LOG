@@ -1,3 +1,11 @@
+=== 0.2 (2007-09-29) ===
+
+- automatically retrieve iCal remote url via Google Calendar authentication
+  (remoted private_url parameter from the config file)
+- handle event organizer 
+- handle event status (CONFIRMED, CANCELED, TENTATIVE)
+- more package info
+
 === 0.1 (2007-09-29) ===
 
 - initial release
