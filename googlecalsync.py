@@ -221,9 +221,10 @@ class GoogleCalendar:
 			# Get calendar private feed URL.
 			new_event = self.calendar_service.InsertEvent(e, '/calendar/feeds/default/private/full')
 			print 'New event inserted (%s): %s' % (self.private_url, new_event.id.text,)
-		except:
+		except Exception, e:
 			print >> sys.stderr, 'WARNING: couldn\'t insert entry %s to %s!' \
 				% (event.uid.value, self.private_url)
+			print type(e), e.args, e
 		return new_event
 
 	# Update a Google Calendar event.
@@ -236,8 +237,9 @@ class GoogleCalendar:
 		try:
 			new_event = self.calendar_service.UpdateEvent(e.GetEditLink().href, e)
 			print 'Updated event (%s): %s' % (self.private_url, new_event.id.text,)
-		except:
+		except Exception, e:
 			print >> sys.stderr, 'WARNING: couldn\'t update entry %s to %s!' % (event.uid.value, self.private_url)
+			print type(e), e.args, e
 		return new_event
 
 	# Delete a Google Calendar event.
@@ -249,8 +251,9 @@ class GoogleCalendar:
 		try:
 			self.calendar_service.DeleteEvent(e.GetEditLink().href)
 			print 'Deleted event (%s): %s' % (self.private_url, e.id.text,)
-		except:
+		except Exception, e:
 			print >> sys.stderr, 'WARNING: couldn\'t delete entry %s in %s!' % (event.uid.value, self.private_url)
+			print type(e), e.args, e
 
 	# List all the Google Calendar events.
 	def list(self):
