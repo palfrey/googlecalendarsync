@@ -25,7 +25,7 @@
 googlecalendarsync by Andrea Righi <righiandr@users.sf.net>
 """
 
-__version__ = '0.2'
+__version__ = '0.3'
 
 import sys, os, re, getopt, string, time, shutil
 import vobject, httplib2, ConfigParser, md5
