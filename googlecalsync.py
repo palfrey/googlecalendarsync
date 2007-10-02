@@ -54,13 +54,27 @@ class GoogleCalendar:
 	def encode_element(self, el):
 		return unicode(el).encode('ascii', 'replace')
 
-	# Use the Google-compliant datetime format.
-	def format_datetime(self, datetime):
+	# Use the Google-compliant datetime format for single events.
+	def format_datetime(self, date):
 		try:
-			ret = time.strftime("%Y-%m-%dT%H:%M:%S.000Z", datetime.utctimetuple())
-			return ret
-		except:
-			return datetime
+			if re.match(r'^\d{4}-\d{2}-\d{2}$', str(date)):
+				return str(date)
+			else:
+				return str(time.strftime("%Y-%m-%dT%H:%M:%S.000Z", date.utctimetuple()))
+		except Exception, e:
+			print type(e), e.args, e
+			return str(date)
+
+	# Use the Google-compliant datetime format for recurring events.
+	def format_datetime_recurring(self, date):
+		try:
+			if re.match(r'^\d{4}-\d{2}-\d{2}$', str(date)):
+				return str(date).replace('-', '')
+			else:
+				return str(time.strftime("%Y%m%dT%H%M%SZ", date.utctimetuple()))
+		except Exception, e:
+			print type(e), e.args, e
+			return str(date)
 
 	# Use the Google-compliant alarm format.
 	def format_alarm(self, alarm):
@@ -108,9 +122,9 @@ class GoogleCalendar:
 		if hasattr(dt, 'rrule'):
 			event['rrule'] = self.encode_element(dt.rrule.value)
 		if hasattr(dt, 'dtstart'):
-			event['start'] = self.format_datetime(dt.dtstart.value)
+			event['start'] = dt.dtstart.value
 		if hasattr(dt, 'dtend'):
-			event['end'] = self.format_datetime(dt.dtend.value)
+			event['end'] = dt.dtend.value
 		if hasattr(dt, 'valarm'):
 			event['alarm'] = self.format_alarm(self.encode_element(dt.valarm.trigger.value))
 
@@ -138,14 +152,19 @@ class GoogleCalendar:
 				# Recurring event.
 				recurrence_data = ('DTSTART;VALUE=DATE:%s\r\n'
 					+ 'DTEND;VALUE=DATE:%s\r\n'
-					+ 'RRULE:%s\r\n') % (event['start'], event['end'], event['rrule'])
+					+ 'RRULE:%s\r\n') % ( \
+					self.format_datetime_recurring(event['start']), \
+					self.format_datetime_recurring(event['end']), \
+					event['rrule'])
 				e.recurrence = gdata.calendar.Recurrence(text=recurrence_data)
 			else:
 				# Single-occurrence event.
 				if len(e.when) > 0:
-					e.when[0] = gdata.calendar.When(start_time=event['start'], end_time=event['end'])
+					e.when[0] = gdata.calendar.When(start_time=self.format_datetime(event['start']), \
+									end_time=self.format_datetime(event['end']))
 				else:
-					e.when.append(gdata.calendar.When(start_time=event['start'], end_time=event['end']))
+					e.when.append(gdata.calendar.When(start_time=self.format_datetime(event['start']), \
+									  end_time=self.format_datetime(event['end'])))
 				if event.has_key('alarm'):
 					# Set reminder.
 					for a_when in e.when:
