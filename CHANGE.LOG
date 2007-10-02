@@ -1,3 +1,8 @@
+=== 0.3 (2007-10-02) ===
+
+- fix: properly format date and time of the recurring events in Google Calendar
+- more verbosity in insert, update and delete actions in Google Calendar
+
 === 0.2 (2007-09-29) ===
 
 - automatically retrieve iCal remote url via Google Calendar authentication
