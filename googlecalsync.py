@@ -623,6 +623,10 @@ if __name__ == '__main__':
 				continue
 		else:
 			#event.prettyPrint()
+			if not (hasattr(event.uid, 'value') and (event.uid.value is not None)):
+				print 'WARNING: skipping NULL-uid value "', event.summary.value, \
+				      '" try to re-create it in your local calendar'
+				continue
 			if re.match('.*@google.com$', event.uid.value):
 				### Insert ###
 				print 'inserting new event', event.uid.value, 'in local calendar'
