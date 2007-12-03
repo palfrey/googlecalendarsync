@@ -364,6 +364,15 @@ class iCalCalendar:
 			print type(e), e.args, e
 			sys.exit(1)
 
+# Class used for logging stuff.
+class Logger:
+	def __init__(self, f):
+		self.f = f
+
+	def write(self, s):
+		self.f.write(s)
+		self.f.flush()
+
 config_file = os.getenv('HOME') + '/.googlecalsync/config'
 
 default_configuration = """\
@@ -395,7 +404,7 @@ Use the following template:
 ##########
 
 Then run:
-  googlecalsync.py [--dry-run]
+  googlecalsync.py [-n | --dry-run]
 """
 
 # Main.
@@ -428,6 +437,7 @@ if __name__ == '__main__':
 		sys.exit(1)
 
 	config = ConfigParser.ConfigParser()
+	# Get mandatory parameters.
 	try:
 		config.read(config_file)
 		login = config.get('google', 'username')
@@ -439,6 +449,11 @@ if __name__ == '__main__':
 		print 'ERROR: not a valid configuration file, check', config_file
 		print type(e), e.args, e
 		sys.exit(1)
+	# Get optional parameters.
+	try:
+		logfile = os.path.expandvars(config.get('local', 'logfile'))
+	except:
+		logfile = None
 
 ### Initialization ###
 
@@ -448,6 +463,14 @@ if __name__ == '__main__':
 			os.makedirs(workdir)
 		except:
 			print >> sys.stderr, 'ERROR: couldn\'t make working directory:', workdir
+			sys.exit(1)
+
+	# Open the log file.
+	if (logfile is not None):
+		try:
+			pass
+		except:
+			print >> sys.stderr, 'ERROR: couldn\'t initialize log file:', logfile
 			sys.exit(1)
 
 	# Initialize local calendar object.
@@ -599,6 +622,7 @@ if __name__ == '__main__':
 			else:
 				continue
 		else:
+			#event.prettyPrint()
 			if re.match('.*@google.com$', event.uid.value):
 				### Insert ###
 				print 'inserting new event', event.uid.value, 'in local calendar'
