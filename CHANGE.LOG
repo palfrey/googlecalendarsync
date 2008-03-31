@@ -1,3 +1,8 @@
+=== 0.4 (2008-03-31) ===
+
+- better error handling with NULL-UID events
+- allow to synchronize events created in different local calendars
+
 === 0.3 (2007-10-02) ===
 
 - fix: properly format date and time of the recurring events in Google Calendar
