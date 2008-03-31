@@ -211,7 +211,10 @@ class GoogleCalendar:
 	# Translate a remote uid into the local uid.
 	def get_local_uid(self, uid):
 		for e in self.elements():
-			if ((os.path.basename(e.id.text) + '@google.com') == uid):
+			local_uid = os.path.basename(e.id.text)
+			if not re.match(r'@google\.com$', local_uid):
+				local_uid = local_uid + '@google.com'
+			if (local_uid == uid):
 				if e.extended_property:
 					for num, p in enumerate(e.extended_property):
 						if (p.name == 'local_uid'):
@@ -623,23 +626,22 @@ if __name__ == '__main__':
 				continue
 		else:
 			#event.prettyPrint()
-			if not (hasattr(event.uid, 'value') and (event.uid.value is not None)):
+			if (not (hasattr(event.uid, 'value')) or (event.uid.value is None)):
 				print 'WARNING: skipping NULL-uid value "', event.summary.value, \
 				      '" try to re-create it in your local calendar'
 				continue
-			if re.match('.*@google.com$', event.uid.value):
-				### Insert ###
-				print 'inserting new event', event.uid.value, 'in local calendar'
-				ical_dirty = True
-				if not dry_run:
-					try:
-						ical.insert(event)
-						if ical_prev is not None:
-							ical_prev.insert(event)
-						if gcal_prev is not None:
-							gcal_prev.insert(event)
-					except:
-						print sys.stderr, 'WARNING: couldn\'t insert entry in local calendar:', event.uid.value
+			### Insert ###
+			print 'inserting new event', event.uid.value, 'in local calendar'
+			ical_dirty = True
+			if not dry_run:
+				try:
+					ical.insert(event)
+					if ical_prev is not None:
+						ical_prev.insert(event)
+					if gcal_prev is not None:
+						gcal_prev.insert(event)
+				except:
+					print sys.stderr, 'WARNING: couldn\'t insert entry in local calendar:', event.uid.value
 
 	# Synchronize removed items.
 	try:
