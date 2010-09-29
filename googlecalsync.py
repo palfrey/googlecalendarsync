@@ -376,7 +376,7 @@ class Logger:
 		self.f.write(s)
 		self.f.flush()
 
-config_file = os.getenv('HOME') + '/.googlecalsync/config'
+config_file = os.getenv('HOME') + '/.config/googlecalsync'
 
 default_configuration = """\
 [google]
@@ -385,7 +385,7 @@ password = <GOOGLE ACCOUNT PASSWORD>
 
 [local]
 ical_file = <PATH OF THE LOCAL iCal FILE>
-workdir = ${HOME}/.googlecalsync/work"""
+workdir = ${HOME}/.cache/googlecalsync/"""
 
 def version():
 	print 'GoogleCalSync version', __version__
