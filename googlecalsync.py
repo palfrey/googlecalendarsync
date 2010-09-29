@@ -445,7 +445,7 @@ if __name__ == '__main__':
 		config.read(config_file)
 		login = config.get('google', 'username')
 		password = config.get('google', 'password')
-		private_url = 'https://www.google.com/calendar/ical/' + login + '/private/basic.ics'
+		private_url = config.get('google', 'private')
 		local_cal_file = os.path.expandvars(config.get('local', 'ical_file'))
 		workdir = os.path.expandvars(config.get('local', 'workdir'))
 	except Exception, e:
